@@ -1,0 +1,230 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+local TextButton = Instance.new("TextButton")
+local TextBox = Instance.new("TextBox")
+local ViewButton = Instance.new("TextButton")
+local SpecificTeleportButton = Instance.new("TextButton")
+local CloseButton = Instance.new("TextButton")
+local LoadScriptButton = Instance.new("TextButton")
+local ArrowButton = Instance.new("TextButton")
+local NewFrame = Instance.new("Frame")
+
+-- Properties:
+ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(44, 44, 44)  -- 다크 그레이 배경
+Frame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Frame.BorderSizePixel = 2
+Frame.Position = UDim2.new(0.5, -150, 0.5, -175)  -- 중앙에 배치 (좌표 조정)
+Frame.Size = UDim2.new(0, 300, 0, 300)
+Frame.ClipsDescendants = false
+Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+
+-- TextLabel (타이틀)
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BackgroundTransparency = 1
+TextLabel.Position = UDim2.new(0.5, -75, 0, 10)
+TextLabel.Size = UDim2.new(0, 150, 0, 35)
+TextLabel.Font = Enum.Font.GothamBold
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextSize = 24
+TextLabel.Text = "Player Gui"
+TextLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+-- 닉네임 입력을 위한 텍스트박스
+TextBox.Parent = Frame
+TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.Position = UDim2.new(0.5, -100, 0, 55)  -- 아래로 위치 변경
+TextBox.Size = UDim2.new(0, 200, 0, 50)
+TextBox.Font = Enum.Font.GothamBold  -- 텍스트 스타일을 GothamBold로 변경
+TextBox.PlaceholderText = "닉네임을 입력하세요"  -- 텍스트 박스 기본 텍스트 수정
+TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)  -- 글자 색상은 흰색
+TextBox.TextSize = 18  -- 텍스트 크기를 18로 설정 (UI에 어울리게)
+TextBox.TextTransparency = 0  -- 글자 투명도 0 (선명하게 보이도록)
+TextBox.ClearTextOnFocus = true  -- 텍스트 박스를 클릭할 때 텍스트가 지워지도록 설정
+TextBox.BackgroundTransparency = 0.9  -- 배경 투명도 설정 (약간 투명한 배경)
+
+-- 버튼 스타일 함수
+local function setButtonStyle(button)
+    button.BackgroundColor3 = Color3.fromRGB(0, 122, 255)  -- 파란색 배경
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)  -- 흰색 텍스트
+    button.Font = Enum.Font.GothamBold
+    button.TextSize = 20
+    button.TextTransparency = 0
+    button.BackgroundTransparency = 0.2
+    button.BorderSizePixel = 0
+end
+
+-- 2x2 버튼 배치 (플레이어 텔포, View, SAFE, ADMIN)
+TextButton.Parent = Frame
+TextButton.Position = UDim2.new(0.12, 0, 0.45, 0)  -- 첫 번째 버튼 (왼쪽 상단)
+TextButton.Size = UDim2.new(0, 100, 0, 50)
+TextButton.Text = "TP"
+setButtonStyle(TextButton)
+
+ViewButton.Parent = Frame
+ViewButton.Position = UDim2.new(0.54, 0, 0.45, 0)  -- 두 번째 버튼 (오른쪽 상단)
+ViewButton.Size = UDim2.new(0, 100, 0, 50)
+ViewButton.Text = "VIEW"
+setButtonStyle(ViewButton)
+
+-- 3번째 버튼 "SAFE"로 변경
+SpecificTeleportButton.Parent = Frame
+SpecificTeleportButton.Position = UDim2.new(0.12, 0, 0.70, 0)  -- 세 번째 버튼 (왼쪽 하단)
+SpecificTeleportButton.Size = UDim2.new(0, 100, 0, 50)
+SpecificTeleportButton.Text = "SAFE"
+setButtonStyle(SpecificTeleportButton)
+
+-- 4번째 버튼 "ADMIN"으로 변경
+LoadScriptButton.Parent = Frame
+LoadScriptButton.Position = UDim2.new(0.54, 0, 0.70, 0)  -- 네 번째 버튼 (오른쪽 하단)
+LoadScriptButton.Size = UDim2.new(0, 100, 0, 50)
+LoadScriptButton.Text = "ADMIN"
+setButtonStyle(LoadScriptButton)
+
+-- 닫기 버튼 (X 버튼)
+CloseButton.Parent = Frame
+CloseButton.Position = UDim2.new(1, -30, 0, 0)
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Text = "X"
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 20
+CloseButton.TextTransparency = 0
+CloseButton.BackgroundTransparency = 0.5
+CloseButton.BorderSizePixel = 0
+
+-- 화살표 버튼
+ArrowButton.Parent = Frame
+ArrowButton.Position = UDim2.new(1, -30, 1, -30)  -- 오른쪽 하단에 위치
+ArrowButton.Size = UDim2.new(0, 30, 0, 30)
+ArrowButton.Text = "→"
+ArrowButton.BackgroundColor3 = Color3.fromRGB(44, 44, 44)  -- 화살표 버튼 배경색을 다크 그레이로 변경
+ArrowButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ArrowButton.Font = Enum.Font.GothamBold
+ArrowButton.TextSize = 20
+ArrowButton.TextTransparency = 0
+ArrowButton.BackgroundTransparency = 0.2
+ArrowButton.BorderSizePixel = 0
+
+-- 새로운 창 (화살표 클릭 시 나타나는 창)
+NewFrame.Parent = Frame
+NewFrame.BackgroundColor3 = Color3.fromRGB(44, 44, 44)  -- 새 창 배경색을 다크 그레이로 변경
+NewFrame.Position = UDim2.new(1, 10, 0, 0)
+NewFrame.Size = UDim2.new(0, 200, 0, 200)
+NewFrame.Visible = false
+
+local TextLabelInNewFrame = Instance.new("TextLabel")
+TextLabelInNewFrame.Parent = NewFrame
+TextLabelInNewFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TextLabelInNewFrame.BackgroundTransparency = 1
+TextLabelInNewFrame.Size = UDim2.new(1, 0, 1, 0)
+TextLabelInNewFrame.Font = Enum.Font.GothamBold
+TextLabelInNewFrame.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabelInNewFrame.TextSize = 24
+TextLabelInNewFrame.Text = "by 데이지"
+TextLabelInNewFrame.TextXAlignment = Enum.TextXAlignment.Center
+TextLabelInNewFrame.TextYAlignment = Enum.TextYAlignment.Center
+
+-- 화살표 버튼 클릭 시 새로운 창 보이기
+ArrowButton.MouseButton1Click:Connect(function()
+    NewFrame.Visible = not NewFrame.Visible  -- 새 창을 토글합니다
+end)
+
+-- 플레이어 텔포 버튼 클릭
+TextButton.MouseButton1Click:Connect(function()
+    local playerName = TextBox.Text:lower()
+    local foundPlayer = nil
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Name:lower():find(playerName) then
+            foundPlayer = player
+            break
+        end
+    end
+    if foundPlayer then
+        local player = game.Players.LocalPlayer
+        player.Character:SetPrimaryPartCFrame(foundPlayer.Character.PrimaryPart.CFrame)
+    else
+        print("부분 닉네임을 가진 플레이어를 찾을 수 없습니다!")
+    end
+end)
+
+-- 특정 좌표로 텔레포트 버튼 클릭
+SpecificTeleportButton.MouseButton1Click:Connect(function()
+    local player = game.Players.LocalPlayer
+    local targetPosition = Vector3.new(100, 9999999, 100)  -- 특정 좌표로 설정
+    player.Character:SetPrimaryPartCFrame(CFrame.new(targetPosition))
+end)
+
+-- View 시점 보기
+local viewEnabled = false
+local currentViewedPlayer = nil
+ViewButton.MouseButton1Click:Connect(function()
+    local playerName = TextBox.Text:lower()
+    local foundPlayer = nil
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Name:lower():find(playerName) then
+            foundPlayer = player
+            break
+        end
+    end
+    if foundPlayer then
+        if not viewEnabled then
+            currentViewedPlayer = foundPlayer
+            workspace.CurrentCamera.CameraSubject = currentViewedPlayer.Character.Humanoid
+            workspace.CurrentCamera.CFrame = currentViewedPlayer.Character.HumanoidRootPart.CFrame
+            viewEnabled = true
+        else
+            workspace.CurrentCamera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+            workspace.CurrentCamera.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            viewEnabled = false
+        end
+    else
+        print("부분 닉네임을 가진 플레이어를 찾을 수 없습니다!")
+    end
+end)
+
+-- 어드민 스크립트 버튼 클릭
+LoadScriptButton.MouseButton1Click:Connect(function()
+    -- 여기에 어드민 스크립트를 로드하는 코드 추가
+    print("어드민 스크립트가 실행됩니다.")
+end)
+
+-- 마우스 드래그 기능 개선
+local dragging = false
+local startPos = nil
+local startFramePos = nil
+Frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        startPos = input.Position
+        startFramePos = Frame.Position
+    end
+end)
+
+Frame.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - startPos
+        Frame.Position = UDim2.new(startFramePos.X.Scale, startFramePos.X.Offset + delta.X, startFramePos.Y.Scale, startFramePos.Y.Offset + delta.Y)
+    end
+end)
+
+Frame.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+-- 닫기 버튼 클릭
+CloseButton.MouseButton1Click:Connect(function()
+    Frame.Visible = false  -- GUI를 닫습니다
+end)

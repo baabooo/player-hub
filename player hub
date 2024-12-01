@@ -167,25 +167,29 @@ end)
 
 -- View 시점 보기
 local viewEnabled = false
-local currentViewedPlayer = nil
+local currentViewedPlayer = nil  -- 현재 보고 있는 플레이어
+
 ViewButton.MouseButton1Click:Connect(function()
-    local playerName = TextBox.Text:lower()
+    local playerName = TextBox.Text:lower()  -- 입력한 닉네임을 소문자로 변환
     local foundPlayer = nil
+    
+    -- 모든 플레이어 목록에서 부분적으로 일치하는 닉네임을 찾음
     for _, player in pairs(game.Players:GetPlayers()) do
-        if player.Name:lower():find(playerName) then
+        if player.Name:lower():find(playerName) then  -- 닉네임 일부가 일치하면
             foundPlayer = player
-            break
+            break  -- 첫 번째로 일치하는 플레이어만 선택
         end
     end
+
     if foundPlayer then
+        -- 시점 전환
         if not viewEnabled then
             currentViewedPlayer = foundPlayer
             workspace.CurrentCamera.CameraSubject = currentViewedPlayer.Character.Humanoid
-            workspace.CurrentCamera.CFrame = currentViewedPlayer.Character.HumanoidRootPart.CFrame
             viewEnabled = true
         else
+            -- View 풀기
             workspace.CurrentCamera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
-            workspace.CurrentCamera.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
             viewEnabled = false
         end
     else

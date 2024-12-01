@@ -161,7 +161,7 @@ end)
 -- 특정 좌표로 텔레포트 버튼 클릭
 SpecificTeleportButton.MouseButton1Click:Connect(function()
     local player = game.Players.LocalPlayer
-    local targetPosition = Vector3.new(100, 9999999, 100)  -- 특정 좌표로 설정
+    local targetPosition = Vector3.new(9999999, 9999999, 100)  -- 특정 좌표로 설정
     player.Character:SetPrimaryPartCFrame(CFrame.new(targetPosition))
 end)
 
@@ -199,8 +199,7 @@ end)
 
 -- 어드민 스크립트 버튼 클릭
 LoadScriptButton.MouseButton1Click:Connect(function()
-    -- 여기에 어드민 스크립트를 로드하는 코드 추가
-    print("어드민 스크립트가 실행됩니다.")
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source', true))()
 end)
 
 -- 마우스 드래그 기능 개선

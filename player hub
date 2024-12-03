@@ -283,7 +283,7 @@ local isHolding = false
 
 local TPKeyTextBox = Instance.new("TextBox")
 TPKeyTextBox.Parent = NewFrame
-TPKeyTextBox.Position = UDim2.new(0.5, -25, 0, 70)  
+TPKeyTextBox.Position = UDim2.new(0.5, -75, 0, 70)  
 TPKeyTextBox.Size = UDim2.new(0, 50, 0, 50)  
 TPKeyTextBox.Font = Enum.Font.GothamBold
 TPKeyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -417,5 +417,77 @@ userInputService.InputEnded:Connect(function(input)
         
         isHolding = false
         print("TP 키 떼어짐: " .. TPKey.Name)
+    end
+end)
+
+local userInputService = game:GetService("UserInputService")
+local foundPlayer = nil
+local ViewKey = nil -- View 기능에 사용할 커스텀 키
+local viewEnabled = false
+local currentViewedPlayer = nil
+
+-- View 키 설정용 텍스트 박스
+local ViewKeyTextBox = Instance.new("TextBox")
+ViewKeyTextBox.Parent = NewFrame
+ViewKeyTextBox.Position = UDim2.new(0.5, 25, 0, 70) -- 위치 조정
+ViewKeyTextBox.Size = UDim2.new(0, 50, 0, 50)
+ViewKeyTextBox.Font = Enum.Font.GothamBold
+ViewKeyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+ViewKeyTextBox.TextSize = 18
+ViewKeyTextBox.PlaceholderText = "VIEW"
+ViewKeyTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ViewKeyTextBox.ClearTextOnFocus = true
+ViewKeyTextBox.BackgroundTransparency = 0.9
+
+-- View 키 설정
+ViewKeyTextBox.FocusLost:Connect(function()
+    local inputKey = ViewKeyTextBox.Text:upper()
+    local validKey = Enum.KeyCode[inputKey]
+
+    if validKey then
+        ViewKey = validKey
+        print("새 View 키 설정: " .. ViewKey.Name)
+    else
+        print("유효하지 않은 View 키입니다.")
+    end
+end)
+
+-- 플레이어 찾기 함수
+local function findPlayer()
+    local playerName = TextBox.Text:lower() -- TextBox에서 입력한 닉네임 가져오기
+    foundPlayer = nil -- 초기화
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Name:lower():find(playerName) then
+            foundPlayer = player
+            break
+        end
+    end
+end
+
+-- View 기능 실행 및 비활성화
+local function toggleView()
+    findPlayer() -- 플레이어 찾기
+    if foundPlayer then
+        if not viewEnabled then
+            currentViewedPlayer = foundPlayer
+            workspace.CurrentCamera.CameraSubject = currentViewedPlayer.Character.Humanoid
+            viewEnabled = true
+            print("View 활성화: " .. currentViewedPlayer.Name)
+        else
+            workspace.CurrentCamera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+            viewEnabled = false
+            print("View 비활성화")
+        end
+    else
+        print("부분 닉네임을 가진 플레이어를 찾을 수 없습니다!")
+    end
+end
+
+-- View 키 입력 이벤트 처리
+userInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+    if gameProcessedEvent then return end
+
+    if ViewKey and input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == ViewKey then
+        toggleView() -- View 기능 토글
     end
 end)

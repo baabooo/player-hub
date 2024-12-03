@@ -30,7 +30,7 @@ TextLabel.Size = UDim2.new(0, 150, 0, 35)
 TextLabel.Font = Enum.Font.GothamBold
 TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextLabel.TextSize = 24
-TextLabel.Text = "Player Gui"
+TextLabel.Text = "Hiyu Hub"
 TextLabel.TextXAlignment = Enum.TextXAlignment.Center
 
 TextBox.Parent = Frame
@@ -277,47 +277,74 @@ CloseButton.MouseButton1Click:Connect(function()
 end)
 
 local userInputService = game:GetService("UserInputService")
-local foundPlayer = nil  
-local TPKey = nil  
-local isHolding = false  
+local foundPlayer = nil
+local TPKey = nil
+local SafeKey = nil
+local isTPActive = false  -- TP 텔포 상태
+local isSafeActive = false  -- Safe 텔포 상태
 
 local TPKeyTextBox = Instance.new("TextBox")
 TPKeyTextBox.Parent = NewFrame
-TPKeyTextBox.Position = UDim2.new(0.5, -75, 0, 70)  
-TPKeyTextBox.Size = UDim2.new(0, 50, 0, 50)  
+TPKeyTextBox.Position = UDim2.new(0.5, -75, 0, 70)
+TPKeyTextBox.Size = UDim2.new(0, 50, 0, 50)
 TPKeyTextBox.Font = Enum.Font.GothamBold
 TPKeyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 TPKeyTextBox.TextSize = 18
 TPKeyTextBox.PlaceholderText = "TP"
 TPKeyTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 TPKeyTextBox.ClearTextOnFocus = true
-TPKeyTextBox.BackgroundTransparency = 0.9  
+TPKeyTextBox.BackgroundTransparency = 0.9
 
+local SafeKeyTextBox = Instance.new("TextBox")
+SafeKeyTextBox.Parent = NewFrame
+SafeKeyTextBox.Position = UDim2.new(0.5, -75, 0, 130)
+SafeKeyTextBox.Size = UDim2.new(0, 50, 0, 50)
+SafeKeyTextBox.Font = Enum.Font.GothamBold
+SafeKeyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+SafeKeyTextBox.TextSize = 18
+SafeKeyTextBox.PlaceholderText = "SAFE"
+SafeKeyTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+SafeKeyTextBox.ClearTextOnFocus = true
+SafeKeyTextBox.BackgroundTransparency = 0.9
 
+-- TP 키 설정
 TPKeyTextBox.FocusLost:Connect(function()
-    local inputKey = TPKeyTextBox.Text:upper()  
-    local validKey = Enum.KeyCode[inputKey]  
+    local inputKey = TPKeyTextBox.Text:upper()
+    local validKey = Enum.KeyCode[inputKey]
     
     if validKey then
-        TPKey = validKey  
+        TPKey = validKey
         print("새 TP 키 설정: " .. TPKey.Name)
     else
         print("유효하지 않은 TP 키입니다.")
     end
 end)
 
+-- Safe 키 설정
+SafeKeyTextBox.FocusLost:Connect(function()
+    local inputKey = SafeKeyTextBox.Text:upper()
+    local validKey = Enum.KeyCode[inputKey]
+    
+    if validKey then
+        SafeKey = validKey
+        print("새 SAFE 키 설정: " .. SafeKey.Name)
+    else
+        print("유효하지 않은 SAFE 키입니다.")
+    end
+end)
 
+-- 플레이어 찾기 함수
 local function findPlayer()
-    local playerName = TextBox.Text:lower()  
+    local playerName = TextBox.Text:lower()  -- 플레이어 이름 텍스트 박스에서 가져옴
     for _, player in pairs(game.Players:GetPlayers()) do
-        if player.Name:lower():find(playerName) then  
+        if player.Name:lower():find(playerName) then  -- 부분 일치로 플레이어 찾기
             foundPlayer = player
             break
         end
     end
 end
 
-
+-- 플레이어에게 텔포하는 함수
 local function teleportToPlayer()
     if foundPlayer then
         local player = game.Players.LocalPlayer
@@ -325,100 +352,85 @@ local function teleportToPlayer()
     end
 end
 
+-- TP 키 눌렀을 때 텔포 시작/중지
+local function toggleTP()
+    if not isTPActive then
+        isTPActive = true
+        print("텔포 시작됨")
 
-userInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-    if gameProcessedEvent then return end  
-
-    if TPKey and input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == TPKey then
-        
-        isHolding = true
-        
-        while isHolding do
-            findPlayer()  
+        -- 텔포를 계속 실행하는 부분
+        while isTPActive do
+            findPlayer()  -- 플레이어 찾기
             if foundPlayer then
-                teleportToPlayer()  
+                teleportToPlayer()  -- 플레이어에게 텔포
             else
                 print("부분 닉네임을 가진 플레이어를 찾을 수 없습니다!")
             end
-            wait(0)  
+            wait(0)
         end
-    end
-end)
-
-
-userInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == TPKey then
-        
-        isHolding = false
-    end
-end)
-
-
-local TPKeyTextBox = Instance.new("TextBox")
-TPKeyTextBox.Parent = NewFrame  
-TPKeyTextBox.Position = UDim2.new(0.5, -25, 0, 150)  
-TPKeyTextBox.Size = UDim2.new(0, 50, 0, 50)  
-TPKeyTextBox.Font = Enum.Font.GothamBold
-TPKeyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-TPKeyTextBox.TextSize = 18
-TPKeyTextBox.PlaceholderText = "SAFE"
-TPKeyTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TPKeyTextBox.ClearTextOnFocus = true
-TPKeyTextBox.BackgroundTransparency = 0.9  
-
-
-local isHolding = false  
-local targetPosition = Vector3.new(9999999, 9999999, 100)  
-
-local userInputService = game:GetService("UserInputService")
-local TPKey  
-
-
-TPKeyTextBox.FocusLost:Connect(function()
-    local inputKey = TPKeyTextBox.Text:upper()  
-    local validKey = Enum.KeyCode[inputKey]  
-    
-    if validKey then
-        TPKey = validKey  
-        print("새 TP 키 설정: " .. TPKey.Name)
     else
-        print("유효하지 않은 TP 키입니다.")
+        isTPActive = false  -- 텔포 중지
+        print("텔포 중지됨")
     end
-end)
-
-
-local function teleportToPosition()
-    local player = game.Players.LocalPlayer
-    player.Character:SetPrimaryPartCFrame(CFrame.new(targetPosition))
 end
 
+-- Safe 키 눌렀을 때 지정된 좌표로 텔포
+local function teleportToSafePosition()
+    local player = game.Players.LocalPlayer
+    local safePosition = Vector3.new(9999999, 9999999, 100)  -- 지정된 Safe 좌표
+    player.Character:SetPrimaryPartCFrame(CFrame.new(safePosition))
+    print("Safe 텔포 완료: " .. tostring(safePosition))
+end
 
-userInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-    if gameProcessedEvent then return end  
+-- Safe 텔포를 계속 반복하도록 처리
+local function toggleSafe()
+    if not isSafeActive then
+        isSafeActive = true
+        print("Safe 텔포 시작됨")
 
-    if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == TPKey then
-        
-        if not isHolding then
-            isHolding = true  
-            print("커스텀 TP 키 눌림: " .. TPKey.Name)
-            
-            
-            while isHolding do
-                teleportToPosition()  
-                wait(0)  
-            end
+        -- Safe 텔포 계속 실행
+        while isSafeActive do
+            teleportToSafePosition()  -- Safe 위치로 텔포
+            wait(0)  -- 계속 반복
         end
+    else
+        isSafeActive = false  -- Safe 텔포 중지
+        print("Safe 텔포 중지됨")
+    end
+end
+
+-- TP와 Safe 키 입력 처리
+userInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+    if gameProcessedEvent then return end  -- 게임에서 처리된 이벤트가 있으면 무시
+
+    -- TP 키가 눌리면
+    if TPKey and input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == TPKey then
+        if isSafeActive then
+            -- Safe 텔포가 활성화 되어 있으면 Safe 텔포 중지하고 TP 텔포 시작
+            isSafeActive = false
+            print("Safe 텔포 중지됨")
+        end
+        toggleTP()  -- TP 텔포 토글
+
+    -- Safe 키가 눌리면
+    elseif SafeKey and input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == SafeKey then
+        if isTPActive then
+            -- TP 텔포가 활성화 되어 있으면 TP 텔포 중지하고 Safe 텔포 시작
+            isTPActive = false
+            print("TP 텔포 중지됨")
+        end
+        toggleSafe()  -- Safe 텔포 토글
     end
 end)
 
-
+-- 키 입력 끝 처리
 userInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == TPKey then
-        
-        isHolding = false
-        print("TP 키 떼어짐: " .. TPKey.Name)
-    end
+    -- 별도로 처리할 부분은 없습니다.
 end)
+
+
+
+
 
 local userInputService = game:GetService("UserInputService")
 local foundPlayer = nil
